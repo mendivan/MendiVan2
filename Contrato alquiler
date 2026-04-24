@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f0f0d">
+<title>MendiVan · Contrato</title>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root {
+  --bg: #0f0f0d;
+  --bg2: #181815;
+  --surface: #1e1e1a;
+  --surface2: #252521;
+  --border: #333330;
+  --border2: #2a2a26;
+  --gold: #c9a96e;
+  --gold2: #a8873a;
+  --green: #8fbd7a;
+  --red: #c97070;
+  --text: #ede9e0;
+  --text2: #8a8778;
+  --text3: #5a5850;
+  --r: 12px;
+  --f: 'Raleway', sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--f);font-size:15px}
+
+/* HEADER */
+.hdr{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,15,13,.97);backdrop-filter:blur(16px);padding:14px 20px 10px;border-bottom:1px solid var(--border2)}
+.hdr-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.logo{font-family:var(--f);font-size:20px;color:var(--gold);letter-spacing:.12em;font-weight:700;text-transform:uppercase}
+.step-info{font-size:10px;color:var(--text3);font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+.prog-track{height:2px;background:var(--border);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--green));border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+/* SCROLL */
+.scroll{position:fixed;top:64px;left:0;right:0;bottom:72px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.page{display:none;padding:24px 20px 20px;animation:up .3s ease}
+.page.on{display:block}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* TYPOGRAPHY */
+.page-title{font-family:var(--f);font-size:28px;font-weight:700;line-height:1.15;margin-bottom:4px;color:var(--text);letter-spacing:-.01em}
+.page-sub{font-size:13px;color:var(--text2);margin-bottom:28px;font-weight:300}
+
+/* VEHICLE CARDS */
+.v-cards{display:flex;flex-direction:column;gap:12px}
+.v-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:18px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.v-card.sel{border-color:var(--gold);background:rgba(201,169,110,.05)}
+.v-card:active{transform:scale(.98)}
+.v-name{font-family:var(--f);font-size:24px;font-weight:700;color:var(--gold);margin-bottom:2px;letter-spacing:.02em}
+.v-sub{font-size:12px;color:var(--text3);margin-bottom:12px;font-weight:300;letter-spacing:.04em}
+.v-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.tag{font-size:11px;padding:3px 10px;border-radius:99px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);font-weight:400}
+.tag.g{color:var(--green);border-color:rgba(143,189,122,.25);background:rgba(143,189,122,.06)}
+.tag.o{color:var(--gold);border-color:rgba(201,169,110,.25);background:rgba(201,169,110,.06)}
+.ins-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:5px 12px;border-radius:8px;font-weight:500}
+.ins-badge.t{background:rgba(201,169,110,.08);color:var(--gold);border:1px solid rgba(201,169,110,.2)}
+.ins-badge.tr{background:rgba(143,189,122,.08);color:var(--green);border:1px solid rgba(143,189,122,.2)}
+.v-check{position:absolute;top:16px;right:16px;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:12px}
+.v-card.sel .v-check{background:var(--gold);border-color:var(--gold);color:#0f0f0d}
+
+/* FORM */
+.fg{margin-bottom:16px}
+label{display:block;font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+input,select,textarea{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--f);font-size:15px;padding:11px 14px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+textarea{resize:none;min-height:72px;line-height:1.5}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.price-box{background:var(--surface2);border:1px solid rgba(201,169,110,.25);border-radius:10px;padding:14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center}
+.price-label{font-size:12px;color:var(--text2);line-height:1.6;font-weight:400}
+.price-val{font-family:var(--f);font-size:28px;color:var(--gold);font-weight:700}
+
+/* PHOTOS */
+.ph-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ph-slot{aspect-ratio:1;border-radius:10px;border:1.5px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;background:var(--surface);transition:border-color .2s}
+.ph-slot:active{transform:scale(.97)}
+.ph-slot.has{border-style:solid;border-color:var(--gold)}
+.ph-slot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.ph-num{font-size:18px;margin-bottom:3px;opacity:.4}
+.ph-rm{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.7);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:5}
+input[type=file]{display:none}
+.ph-hint{margin-top:12px;font-size:12px;color:var(--text3);font-weight:300;line-height:1.6}
+
+/* CONDITIONS */
+.cond-box{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);max-height:300px;overflow-y:auto;padding:16px;font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:18px;font-weight:300}
+.cond-box h4{color:var(--text);font-size:13px;margin:14px 0 4px;font-weight:600;letter-spacing:.02em}
+.cond-box h4:first-child{margin-top:0}
+.accept-row{display:flex;align-items:flex-start;gap:12px;background:var(--surface2);border-radius:10px;padding:14px;border:1px solid var(--border2)}
+.accept-row input[type=checkbox]{width:18px;min-width:18px;height:18px;accent-color:var(--gold);cursor:pointer;margin-top:2px}
+.accept-row label{font-size:13px;color:var(--text);text-transform:none;letter-spacing:0;font-weight:400}
+
+/* SIGNATURES */
+.sig-wrap{margin-bottom:14px}
+.sig-lbl{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.sig-box{border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;background:#fff;position:relative}
+.sig-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#ccc;font-size:13px;pointer-events:none;text-align:center;transition:opacity .3s;font-family:var(--f);font-weight:300}
+canvas{display:block;width:100%;touch-action:none}
+.sig-clear{margin-top:6px;padding:8px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:var(--f);font-size:12px;cursor:pointer;width:100%;font-weight:400}
+.sig-divider{height:1px;background:var(--border2);margin:18px 0}
+
+/* BOTTOM BAR */
+.bar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(15,15,13,.97);backdrop-filter:blur(16px);padding:12px 20px 26px;border-top:1px solid var(--border2);display:flex;gap:10px}
+.btn-back{padding:13px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);color:var(--text2);font-family:var(--f);font-size:14px;cursor:pointer;min-width:80px;text-align:center;font-weight:500}
+.btn-next{flex:1;padding:13px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:var(--r);color:#0f0f0d;font-family:var(--f);font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.04em;text-transform:uppercase}
+.btn-next:active{opacity:.85}
+.btn-next.fin{background:linear-gradient(135deg,var(--green),#6a9e56)}
+
+/* SUCCESS */
+.success-wrap{padding:10px 0}
+.success-ico{font-size:52px;text-align:center;margin-bottom:14px}
+.success-title{font-family:var(--f);font-size:28px;font-weight:700;color:var(--green);margin-bottom:8px;text-align:center;letter-spacing:-.01em}
+.success-sub{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px;text-align:center;font-weight:300}
+.summary-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:16px;margin-bottom:16px}
+.s-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border2)}
+.s-row:last-child{border:none}
+.s-key{font-size:12px;color:var(--text2);font-weight:400}
+.s-val{font-size:13px;color:var(--text);font-weight:600}
+.btn-dl{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:var(--r);color:#0f0f0d;font-family:var(--f);font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px}
+.btn-new{width:100%;padding:13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);color:var(--text2);font-family:var(--f);font-size:14px;font-weight:500;cursor:pointer}
+
+/* LOADING */
+.loading{display:none;position:fixed;inset:0;background:rgba(15,15,13,.93);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.loading.on{display:flex}
+.spin{width:36px;height:36px;border:2.5px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-txt{font-size:13px;color:var(--text2);font-weight:300}
+
+/* TOAST */
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--surface2);border:1px solid var(--border);border-radius:99px;padding:9px 18px;font-size:13px;color:var(--text);opacity:0;transition:all .25s;z-index:999;white-space:nowrap;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-row">
+    <div class="logo">MendiVan</div>
+    <div class="step-info" id="stepInfo">Paso 1 de 5</div>
+  </div>
+  <div class="prog-track"><div class="prog-fill" id="progFill" style="width:20%"></div></div>
+</div>
+
+<div class="scroll" id="scroll">
+
+<!-- STEP 1: VEHICLE -->
+<div class="page on" id="s1">
+  <div class="page-title">¿Qué camper<br>se entrega?</div>
+  <div class="page-sub">Selecciona el vehículo para este contrato</div>
+  <div class="v-cards">
+    <div class="v-card" id="card-explorer" onclick="selV('explorer')">
+      <div class="v-check" id="chk-explorer"></div>
+      <div class="v-name">Explorer</div>
+      <div class="v-sub">Volkswagen T5 · 2015 · 6147-HFG</div>
+      <div class="v-tags">
+        <span class="tag">4 plazas cinturón</span>
+        <span class="tag">Duerme 2</span>
+        <span class="tag g">Calefacción estacionaria</span>
+      </div>
+      <div class="ins-badge t">🛡 Terceros óptima · Sin franquicia · Póliza 022641233669</div>
+    </div>
+    <div class="v-card" id="card-nomad" onclick="selV('nomad')">
+      <div class="v-check" id="chk-nomad"></div>
+      <div class="v-name">Nomad</div>
+      <div class="v-sub">Volkswagen T6 · 2016 · 5725-NMM</div>
+      <div class="v-tags">
+        <span class="tag">Sofá-cama</span>
+        <span class="tag">220V</span>
+        <span class="tag o">Interior amplio y luminoso</span>
+      </div>
+      <div class="ins-badge tr">🛡 Todo riesgo · Franquicia 600€ · Póliza 022641234166</div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2: CLIENT -->
+<div class="page" id="s2">
+  <div class="page-title">Datos del<br>arrendatario</div>
+  <div class="page-sub">Información de quien firma el contrato</div>
+  <div class="fg"><label>Nombre completo</label><input id="cName" type="text" placeholder="Nombre y apellidos" autocomplete="name"></div>
+  <div class="fg"><label>DNI / NIE / Pasaporte</label><input id="cDNI" type="text" placeholder="00000000X" style="text-transform:uppercase"></div>
+  <div class="fg"><label>Nº carnet de conducir</label><input id="cLic" type="text" placeholder="Número de carnet"></div>
+  <div class="fg"><label>Dirección</label><input id="cAddr" type="text" placeholder="Calle, número, ciudad"></div>
+</div>
+
+<!-- STEP 3: DATES -->
+<div class="page" id="s3">
+  <div class="page-title">Fechas<br>y precio</div>
+  <div class="page-sub">Período de alquiler y condiciones económicas</div>
+  <div class="g2">
+    <div class="fg"><label>Fecha de salida</label><input id="dStart" type="date" onchange="calcP()"></div>
+    <div class="fg"><label>Fecha de devolución</label><input id="dEnd" type="date" onchange="calcP()"></div>
+  </div>
+  <div class="fg"><label>Hora de devolución</label><input id="tEnd" type="time" value="10:00"></div>
+  <div class="fg"><label>Precio por noche (€)</label><input id="ppn" type="number" placeholder="90" oninput="calcP()"></div>
+  <div class="price-box" id="pBox" style="display:none">
+    <div>
+      <div class="price-label" id="nightsLbl">— noches</div>
+      <div class="price-label">Fianza: 600 €</div>
+    </div>
+    <div class="price-val" id="totalLbl">—€</div>
+  </div>
+  <div class="fg" style="margin-top:14px"><label>Lugar de entrega</label><input id="dPlace" type="text" value="Parking Miribilla, Bilbao"></div>
+  <div class="fg"><label>Lugar de devolución</label><input id="rPlace" type="text" value="Parking Miribilla, Bilbao"></div>
+</div>
+
+<!-- STEP 4: PHOTOS -->
+<div class="page" id="s4">
+  <div class="page-title">Fotos del<br>vehículo</div>
+  <div class="page-sub">Documenta el estado visual — ninguna es obligatoria</div>
+  <div class="ph-grid" id="phGrid"></div>
+  <div class="ph-hint">Las fotos se incluirán en el PDF del contrato. Intenta que sean claras y representen el estado real del vehículo.</div>
+</div>
+
+<!-- STEP 5: CONDITIONS -->
+<div class="page" id="s5">
+  <div class="page-title">Condiciones<br>del contrato</div>
+  <div class="page-sub">El arrendatario debe leer y aceptar antes de firmar</div>
+  <div class="cond-box" id="condBox"></div>
+  <div class="accept-row">
+    <input type="checkbox" id="accepted">
+    <label for="accepted">He leído y acepto en su totalidad las condiciones generales del contrato de alquiler de MendiVan</label>
+  </div>
+</div>
+
+<!-- STEP 6: SIGNATURES -->
+<div class="page" id="s6">
+  <div class="page-title">Firmas</div>
+  <div class="page-sub">Primero firma el cliente, después Iñaki</div>
+
+  <div class="sig-wrap">
+    <div class="sig-lbl">Firma del arrendatario</div>
+    <div class="sig-box">
+      <canvas id="sigC" height="180"></canvas>
+      <div class="sig-hint" id="hintC">✍️ Firma aquí el cliente</div>
+    </div>
+    <button class="sig-clear" onclick="clearSig('C')">🗑 Borrar firma</button>
+  </div>
+
+  <div class="sig-divider"></div>
+
+  <div class="sig-wrap">
+    <div class="sig-lbl">Firma del arrendador — Iñaki</div>
+    <div class="sig-box">
+      <canvas id="sigI" height="180"></canvas>
+      <div class="sig-hint" id="hintI">✍️ Firma aquí Iñaki</div>
+    </div>
+    <button class="sig-clear" onclick="clearSig('I')">🗑 Borrar firma</button>
+  </div>
+</div>
+
+<!-- STEP 7: SUCCESS -->
+<div class="page" id="s7">
+  <div class="success-wrap">
+    <div class="success-ico">✅</div>
+    <div class="success-title">¡Contrato firmado!</div>
+    <div class="success-sub" id="succSub">PDF generado y descargado correctamente.</div>
+    <div class="summary-card" id="summCard"></div>
+    <button class="btn-dl" onclick="dlPDF()">📄 Abrir / Descargar PDF</button>
+    <button class="btn-new" onclick="location.reload()">+ Nuevo contrato</button>
+  </div>
+</div>
+
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bar" id="bar">
+  <button class="btn-back" id="btnBack" onclick="prev()" style="display:none">← Atrás</button>
+  <button class="btn-next" id="btnNext" onclick="next()">Continuar →</button>
+</div>
+
+<div class="loading" id="loader">
+  <div class="spin"></div>
+  <div class="load-txt" id="loadTxt">Generando contrato...</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// VEHICLES
+// ══════════════════════════════════════════
+const VEHICLES = {
+  explorer:{name:'Explorer',model:'Volkswagen Transporter T5 · 2015',plate:'6147-HFG',policy:'022641233669',insurance:'Lagun Aro · Terceros Óptima Camper',franchise:'Sin franquicia',fianza:600},
+  nomad:{name:'Nomad',model:'Volkswagen Transporter T6 · 2016',plate:'5725-NMM',policy:'022641234166',insurance:'Lagun Aro · Todo Riesgo Camper',franchise:'Franquicia 600 €',fianza:600}
+};
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+const S={step:1,total:6,vehicle:null,client:{},dates:{},photos:{},sigC:null,sigI:null,pdfBlob:null};
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+window.onload=()=>{buildPhotos();buildConditions();initSig('C');initSig('I');};
+
+// ══════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════
+function goTo(n){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById('s'+n).classList.add('on');
+  S.step=n;
+  const done=n>S.total;
+  document.getElementById('stepInfo').textContent=done?'Completado':`Paso ${n} de ${S.total}`;
+  document.getElementById('progFill').style.width=Math.min(100,(n/S.total)*100)+'%';
+  document.getElementById('btnBack').style.display=(n>1&&!done)?'block':'none';
+  const btn=document.getElementById('btnNext');
+  btn.style.display=done?'none':'block';
+  if(n===S.total){btn.textContent='Generar contrato';btn.classList.add('fin');}
+  else{btn.textContent='Continuar →';btn.classList.remove('fin');}
+  document.getElementById('bar').style.display=done?'none':'flex';
+  document.getElementById('scroll').scrollTop=0;
+}
+function next(){if(validate(S.step)){S.step===S.total?finalize():goTo(S.step+1);}}
+function prev(){if(S.step>1)goTo(S.step-1);}
+
+// ══════════════════════════════════════════
+// VALIDATION
+// ══════════════════════════════════════════
+function validate(step){
+  if(step===1){if(!S.vehicle){toast('Selecciona una furgoneta');return false;}}
+  if(step===2){
+    const n=v('cName'),d=v('cDNI');
+    if(!n||!d){toast('Nombre y DNI son obligatorios');return false;}
+    S.client={name:n,dni:d.toUpperCase(),license:v('cLic'),addr:v('cAddr')};
+  }
+  if(step===3){
+    const s=v('dStart'),e=v('dEnd'),p=v('ppn');
+    if(!s||!e||!p){toast('Rellena fechas y precio');return false;}
+    if(e<=s){toast('La devolución debe ser posterior a la salida');return false;}
+    const nights=Math.round((new Date(e)-new Date(s))/86400000);
+    S.dates={start:s,end:e,nights,tEnd:v('tEnd'),ppn:parseFloat(p),total:nights*parseFloat(p),dPlace:v('dPlace'),rPlace:v('rPlace')};
+  }
+  if(step===5){if(!document.getElementById('accepted').checked){toast('El arrendatario debe aceptar las condiciones');return false;}}
+  if(step===6){
+    if(!S.sigC){toast('Falta la firma del arrendatario');return false;}
+    if(!S.sigI){toast('Falta la firma de Iñaki');return false;}
+  }
+  return true;
+}
+const v=id=>document.getElementById(id).value.trim();
+
+// ══════════════════════════════════════════
+// VEHICLE SELECTION
+// ══════════════════════════════════════════
+function selV(key){
+  S.vehicle=key;
+  document.querySelectorAll('.v-card').forEach(c=>c.classList.remove('sel'));
+  document.querySelectorAll('.v-check').forEach(c=>c.textContent='');
+  document.getElementById('card-'+key).classList.add('sel');
+  document.getElementById('chk-'+key).textContent='✓';
+}
+
+// ══════════════════════════════════════════
+// PRICE
+// ══════════════════════════════════════════
+function calcP(){
+  const s=v('dStart'),e=v('dEnd'),p=parseFloat(v('ppn'))||0;
+  if(!s||!e||e<=s||!p){document.getElementById('pBox').style.display='none';return;}
+  const nights=Math.round((new Date(e)-new Date(s))/86400000);
+  document.getElementById('nightsLbl').textContent=nights+(nights===1?' noche':' noches');
+  document.getElementById('totalLbl').textContent=(nights*p)+'€';
+  document.getElementById('pBox').style.display='flex';
+}
+
+// ══════════════════════════════════════════
+// PHOTOS (9 slots, none obligatory)
+// ══════════════════════════════════════════
+function buildPhotos(){
+  const g=document.getElementById('phGrid');
+  for(let i=1;i<=9;i++){
+    const d=document.createElement('div');
+    d.className='ph-slot';d.id='ph-'+i;
+    d.innerHTML=`<div class="ph-num">📷</div>
+      <input type="file" id="fi-${i}" accept="image/*" capture="environment" onchange="loadPhoto(${i},this)">`;
+    d.onclick=()=>document.getElementById('fi-'+i).click();
+    g.appendChild(d);
+  }
+}
+function loadPhoto(i,inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    S.photos[i]=e.target.result;
+    const slot=document.getElementById('ph-'+i);
+    slot.classList.add('has');
+    slot.innerHTML=`<img src="${e.target.result}" alt="">
+      <button class="ph-rm" onclick="rmPhoto(${i},event)">✕</button>
+      <input type="file" id="fi-${i}" accept="image/*" capture="environment" onchange="loadPhoto(${i},this)">`;
+  };
+  r.readAsDataURL(f);
+}
+function rmPhoto(i,e){
+  e.stopPropagation();delete S.photos[i];
+  const slot=document.getElementById('ph-'+i);
+  slot.classList.remove('has');
+  slot.innerHTML=`<div class="ph-num">📷</div>
+    <input type="file" id="fi-${i}" accept="image/*" capture="environment" onchange="loadPhoto(${i},this)">`;
+  slot.onclick=()=>document.getElementById('fi-'+i).click();
+}
+
+// ══════════════════════════════════════════
+// CONDITIONS
+// ══════════════════════════════════════════
+function buildConditions(){
+  document.getElementById('condBox').innerHTML=`
+<h4>1. Entrega y devolución</h4>La entrega y devolución se realizará en el lugar acordado. El importe total del alquiler debe abonarse antes de la salida. Se depositará una fianza de 600 € para garantizar el buen uso y correcta devolución del vehículo.
+<h4>2. Reserva y cancelación</h4>La reserva incluye el pago del 30% como señal. Penalizaciones por cancelación: más de 30 días → 50% sobre la señal; entre 30 y 16 días → 80%; menos de 16 días → 100%.
+<h4>3. Conductor autorizado</h4>Edad mínima 25 años con mínimo 2 años de antigüedad del carnet tipo B. Solo puede conducir la persona indicada en este contrato. En caso de siniestro causado por conductor no autorizado, Lagun Aro aplicará una franquicia adicional de 1.500 € a cargo del arrendatario.
+<h4>4. Kilometraje</h4>El alquiler incluye kilometraje ilimitado.
+<h4>5. Devolución del vehículo</h4>El vehículo se devuelve en buenas condiciones higiénicas: exterior e interior limpio, WC vaciado, depósitos de aguas residuales vaciados y aguas limpias llenas. En caso contrario se aplicará un cargo de 50 € por limpieza. Se devuelve con el mismo nivel de combustible; el litro adicional se factura a 2 €/litro.
+<h4>6. Seguro y siniestros</h4>El vehículo está asegurado con Lagun Aro (póliza indicada en el contrato). En caso de siniestro, el arrendatario avisará inmediatamente al arrendador y cumplimentará el parte de accidente. Las responsabilidades no cubiertas por la póliza son exclusivas del arrendatario.
+<h4>7. Uso del vehículo</h4>Prohibido fumar dentro del vehículo. Mascotas permitidas. El arrendatario asume todas las multas y sanciones durante el período de alquiler.
+<h4>8. Pernocta</h4>El arrendatario es responsable de cumplir la normativa vigente sobre pernocta y acampada libre. MendiVan no asume responsabilidad por sanciones derivadas de su incumplimiento.
+<h4>9. Prórroga y retrasos</h4>Los retrasos no autorizados se penalizan con tarifa diaria doble. Cualquier prórroga debe acordarse con 3 días de antelación. Si el arrendatario finaliza antes de lo previsto, no tiene derecho a reembolso.
+<h4>10. Geolocalización</h4>El vehículo dispone de rastreo GPS para garantizar la seguridad en caso de urgencia, respetando la normativa de protección de datos vigente.
+<h4>11. Fuerza mayor</h4>Si por causa mayor el arrendador no pudiese entregar el vehículo, devolverá íntegramente el importe abonado sin que el arrendatario pueda exigir indemnización adicional.
+<h4>12. Devolución de la fianza</h4>La fianza se devuelve tras la inspección del vehículo. El plazo máximo de devolución es de 30 días desde la entrega. En caso de desperfectos se descontará el coste de reparación.`;
+}
+
+// ══════════════════════════════════════════
+// SIGNATURES — iOS Safari compatible
+// ══════════════════════════════════════════
+const sigState={
+  C:{ctx:null,drawing:false,drawn:false,lastX:0,lastY:0,lastVel:0},
+  I:{ctx:null,drawing:false,drawn:false,lastX:0,lastY:0,lastVel:0}
+};
+
+function initSig(key){
+  const canvas=document.getElementById('sig'+key);
+  const dpr=window.devicePixelRatio||1;
+
+  // Size canvas explicitly
+  const W=canvas.parentElement.clientWidth||340;
+  const H=180;
+  canvas.width=W*dpr;
+  canvas.height=H*dpr;
+  canvas.style.width=W+'px';
+  canvas.style.height=H+'px';
+
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  ctx.lineCap='round';
+  ctx.lineJoin='round';
+  sigState[key].ctx=ctx;
+
+  function getPos(e){
+    const r=canvas.getBoundingClientRect();
+    const src=e.touches?e.touches[0]:e;
+    return{x:(src.clientX-r.left),y:(src.clientY-r.top)};
+  }
+
+  function onStart(e){
+    e.preventDefault();
+    const p=getPos(e);
+    const st=sigState[key];
+    st.drawing=true;st.lastX=p.x;st.lastY=p.y;st.lastVel=0;
+    ctx.beginPath();ctx.moveTo(p.x,p.y);
+  }
+
+  function onMove(e){
+    e.preventDefault();
+    const st=sigState[key];
+    if(!st.drawing)return;
+    const p=getPos(e);
+    const dx=p.x-st.lastX,dy=p.y-st.lastY;
+    const vel=Math.sqrt(dx*dx+dy*dy);
+    st.lastVel=st.lastVel*0.5+vel*0.5;
+    const lw=Math.max(1,Math.min(3,3-st.lastVel*0.06));
+    ctx.lineWidth=lw;
+    ctx.strokeStyle='rgba(5,8,25,0.88)';
+    ctx.lineTo(p.x,p.y);
+    ctx.stroke();
+    ctx.beginPath();ctx.moveTo(p.x,p.y);
+    st.lastX=p.x;st.lastY=p.y;
+    if(!st.drawn){
+      st.drawn=true;
+      const hint=document.getElementById('hint'+key);
+      if(hint)hint.style.opacity='0';
+    }
+    S['sig'+key]=canvas.toDataURL('image/png',1.0);
+  }
+
+  function onEnd(e){
+    e.preventDefault();
+    sigState[key].drawing=false;
+  }
+
+  // Touch events — iOS needs these on the canvas element directly
+  canvas.addEventListener('touchstart',onStart,{passive:false});
+  canvas.addEventListener('touchmove',onMove,{passive:false});
+  canvas.addEventListener('touchend',onEnd,{passive:false});
+  canvas.addEventListener('touchcancel',onEnd,{passive:false});
+
+  // Mouse events for desktop
+  canvas.addEventListener('mousedown',onStart);
+  canvas.addEventListener('mousemove',onMove);
+  canvas.addEventListener('mouseup',onEnd);
+}
+
+function clearSig(key){
+  const canvas=document.getElementById('sig'+key);
+  const st=sigState[key];
+  const dpr=window.devicePixelRatio||1;
+  st.ctx.clearRect(0,0,canvas.width/dpr,canvas.height/dpr);
+  S['sig'+key]=null;st.drawn=false;
+  const hint=document.getElementById('hint'+key);
+  if(hint)hint.style.opacity='1';
+}
+
+// ══════════════════════════════════════════
+// DATE FORMAT
+// ══════════════════════════════════════════
+function fmtDate(ds){return new Date(ds+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'});}
+
+// ══════════════════════════════════════════
+// PDF
+// ══════════════════════════════════════════
+async function buildPDF(){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const PW=210,M=18,CW=PW-M*2;
+  const veh=VEHICLES[S.vehicle],c=S.client,d=S.dates;
+  const gold=[201,169,110],dark=[15,15,13],lightbg=[248,246,241],midgray=[235,232,225];
+  let y=0;
+
+  const setFont=(style='normal',size=10,color=[30,30,26])=>{doc.setFont('helvetica',style);doc.setFontSize(size);doc.setTextColor(...color);};
+  const tx=(t,x,yy,opts={})=>{setFont(opts.s||'normal',opts.sz||10,opts.c||[30,30,26]);doc.text(String(t),x,yy,{align:opts.a||'left',maxWidth:opts.mw});};
+  const hline=(yy,col=[210,205,195])=>{doc.setDrawColor(...col);doc.setLineWidth(0.25);doc.line(M,yy,PW-M,yy);};
+  const fillR=(x,yy,w,h,col)=>{doc.setFillColor(...col);doc.rect(x,yy,w,h,'F');};
+  const sectionTitle=(label,yy)=>{
+    fillR(M,yy,CW,7,[245,240,228]);
+    doc.setDrawColor(...gold);doc.setLineWidth(0.3);doc.rect(M,yy,CW,7);
+    setFont('bold',8,gold);doc.text(label,M+4,yy+5);
+    return yy+12;
+  };
+
+  // ── HEADER ──
+  fillR(0,0,PW,30,dark);
+  setFont('bold',24,gold);doc.text('MENDIVAN',M,19);
+  setFont('normal',9,[150,145,135]);doc.text('Contrato de Alquiler de Furgoneta Camper',M,25.5);
+  setFont('normal',8,[110,105,95]);
+  doc.text(new Date().toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'}),PW-M,19,{align:'right'});
+  doc.text('Póliza: '+veh.policy,PW-M,25.5,{align:'right'});
+
+  y=38;
+
+  // ── VEHICLE BANNER ──
+  fillR(M,y,CW,18,lightbg);
+  doc.setDrawColor(...gold);doc.setLineWidth(0.5);doc.rect(M,y,CW,18);
+  setFont('bold',15,dark);doc.text(veh.name,M+5,y+8);
+  setFont('normal',9,[100,95,85]);doc.text(veh.model,M+5,y+14);
+  setFont('bold',11,gold);doc.text(veh.plate,PW-M-5,y+8,{align:'right'});
+  setFont('normal',8,[120,115,105]);doc.text(veh.insurance+' · '+veh.franchise,PW-M-5,y+14,{align:'right'});
+  y+=24;
+
+  // ── PARTES ──
+  y=sectionTitle('PARTES DEL CONTRATO',y);
+
+  setFont('bold',8,[130,125,115]);doc.text('ARRENDADOR',M,y);y+=5;
+  setFont('bold',10,dark);doc.text('Iñaki Mendialdua Gametxogoikoetxea',M,y);y+=5;
+  setFont('normal',9,[100,95,85]);doc.text('DNI: 79126835G  ·  Autónomo  ·  inaki@mendivan.com',M,y);y+=9;
+
+  setFont('bold',8,[130,125,115]);doc.text('ARRENDATARIO',M,y);y+=5;
+  setFont('bold',10,dark);doc.text(c.name,M,y);y+=5;
+  setFont('normal',9,[100,95,85]);
+  doc.text('DNI/NIE: '+c.dni+(c.license?'  ·  Carnet: '+c.license:''),M,y);y+=5;
+  if(c.addr){doc.text('Dirección: '+c.addr,M,y,{maxWidth:CW});y+=5;}
+  y+=4;
+
+  // ── PERÍODO ──
+  y=sectionTitle('PERÍODO Y PRECIO',y);
+
+  const c2=M+CW/2+2;
+  setFont('bold',8,[130,125,115]);doc.text('Fecha de salida:',M,y);
+  setFont('normal',10,dark);doc.text(fmtDate(d.start),M+32,y);
+  setFont('bold',8,[130,125,115]);doc.text('Devolución:',c2,y);
+  setFont('normal',10,dark);doc.text(fmtDate(d.end)+' · '+d.tEnd+'h',c2+22,y);y+=6;
+
+  setFont('bold',8,[130,125,115]);doc.text('Lugar entrega:',M,y);
+  setFont('normal',9,[80,78,72]);doc.text(d.dPlace,M+28,y);y+=5;
+  setFont('bold',8,[130,125,115]);doc.text('Lugar devolución:',M,y);
+  setFont('normal',9,[80,78,72]);doc.text(d.rPlace,M+32,y);y+=8;
+
+  fillR(M,y,CW,16,lightbg);
+  doc.setDrawColor(...gold);doc.setLineWidth(0.3);doc.rect(M,y,CW,16);
+  setFont('normal',9,[100,95,85]);
+  doc.text(`${d.nights} ${d.nights===1?'noche':'noches'} × ${d.ppn} €/noche`,M+5,y+7);
+  doc.text('Fianza: 600 €',M+5,y+13);
+  setFont('bold',18,gold);doc.text(d.total+' €',PW-M-5,y+11,{align:'right'});
+  y+=22;
+
+  // ── PHOTOS ──
+  const photoNums=Object.keys(S.photos).map(Number).sort((a,b)=>a-b);
+  if(photoNums.length>0){
+    y=sectionTitle('FOTOGRAFÍAS DEL VEHÍCULO',y);
+    const phW=(CW-10)/3,phH=phW*0.72;
+    let px=M,py=y,col=0;
+
+    for(const num of photoNums){
+      if(py+phH+10>272){
+        doc.addPage();
+        fillR(0,0,PW,12,dark);setFont('bold',8,gold);doc.text('MENDIVAN · Fotografías',M,8);
+        py=18;px=M;col=0;
+      }
+      try{
+        doc.addImage(S.photos[num],'JPEG',px,py,phW,phH,undefined,'MEDIUM');
+        doc.setDrawColor(200,195,185);doc.setLineWidth(0.2);doc.rect(px,py,phW,phH);
+        setFont('normal',7,[140,135,125]);doc.text('Foto '+num,px+phW/2,py+phH+4,{align:'center'});
+      }catch(err){}
+      col++;px+=phW+5;
+      if(col>=3){col=0;px=M;py+=phH+10;}
+    }
+    y=(col>0?py+phH+10:py)+2;
+  }
+
+  // ── FULL CONDITIONS ──
+  if(y>245){doc.addPage();y=20;fillR(0,0,PW,12,dark);setFont('bold',8,gold);doc.text('MENDIVAN · Condiciones Generales',M,8);}
+  y=sectionTitle('CONDICIONES GENERALES DEL CONTRATO',y);
+
+  const fullConds=[
+    ['1. Entrega y devolución','La entrega y devolución se realizará en el lugar acordado. El importe total del alquiler debe abonarse antes de la salida. Se depositará una fianza de 600 € para garantizar el buen uso y correcta devolución del vehículo.'],
+    ['2. Reserva y cancelación','La reserva incluye el pago del 30% como señal. Penalizaciones por cancelación: más de 30 días antes → 50% sobre la señal; entre 30 y 16 días → 80%; menos de 16 días → 100%.'],
+    ['3. Conductor autorizado','Edad mínima 25 años con mínimo 2 años de antigüedad del carnet tipo B. Solo puede conducir la persona indicada en este contrato. En caso de siniestro causado por conductor no autorizado, Lagun Aro aplicará una franquicia adicional de 1.500 € a cargo del arrendatario.'],
+    ['4. Kilometraje','El alquiler incluye kilometraje ilimitado.'],
+    ['5. Devolución del vehículo','El vehículo se devuelve en buenas condiciones higiénicas: exterior e interior limpio, WC vaciado, depósitos de aguas residuales vaciados y aguas limpias llenas. En caso contrario se aplicará un cargo de 50 € por limpieza. Se devuelve con el mismo nivel de combustible; el litro adicional se factura a 2 €/litro.'],
+    ['6. Seguro y siniestros',`El vehículo está asegurado con ${veh.insurance} (póliza ${veh.policy}). ${veh.franchise}. En caso de siniestro, el arrendatario avisará inmediatamente al arrendador y cumplimentará el parte de accidente. Las responsabilidades no cubiertas por la póliza son exclusivas del arrendatario.`],
+    ['7. Uso del vehículo','Prohibido fumar dentro del vehículo. Mascotas permitidas. El arrendatario asume todas las multas y sanciones durante el período de alquiler, incluidas las derivadas del uso del vehículo como vivienda.'],
+    ['8. Pernocta','El arrendatario es responsable de cumplir la normativa vigente sobre pernocta y acampada libre. MendiVan no asume responsabilidad por sanciones derivadas de su incumplimiento. Se recomienda consultar la regulación del destino antes del viaje.'],
+    ['9. Prórroga y retrasos','Los retrasos no autorizados se penalizan con tarifa diaria doble. Cualquier prórroga debe acordarse con 3 días de antelación. Si el arrendatario finaliza el alquiler antes de lo previsto, no tiene derecho a reembolso.'],
+    ['10. Geolocalización','El vehículo dispone de rastreo GPS para garantizar la seguridad en caso de urgencia, respetando en todo momento la normativa de protección de datos vigente.'],
+    ['11. Fuerza mayor','Si por causa mayor el arrendador no pudiese entregar el vehículo, devolverá íntegramente el importe abonado sin que el arrendatario pueda exigir indemnización adicional.'],
+    ['12. Devolución de la fianza','La fianza se devuelve tras la inspección del vehículo. El plazo máximo de devolución es de 30 días desde la entrega. En caso de desperfectos se descontará el coste de reparación. Si no es posible valorar los daños de forma inmediata, el arrendador dispondrá del plazo máximo indicado para la devolución del importe sobrante.']
+  ];
+
+  fullConds.forEach(([title, text])=>{
+    // Check page space — each clause needs ~18-20mm
+    if(y>262){
+      doc.addPage();
+      fillR(0,0,PW,12,dark);setFont('bold',8,gold);doc.text('MENDIVAN · Condiciones Generales',M,8);
+      y=18;
+    }
+    // Title
+    setFont('bold',8,gold);doc.text(title,M,y);y+=4.5;
+    // Body — measure height
+    setFont('normal',8,[70,68,62]);
+    const lines=doc.splitTextToSize(text,CW-4);
+    // Check if block fits on this page
+    const blockH=lines.length*4+4;
+    if(y+blockH>272){
+      doc.addPage();
+      fillR(0,0,PW,12,dark);setFont('bold',8,gold);doc.text('MENDIVAN · Condiciones Generales',M,8);
+      y=18;
+      setFont('bold',8,gold);doc.text(title,M,y);y+=4.5;
+      setFont('normal',8,[70,68,62]);
+    }
+    doc.text(lines,M+2,y);
+    y+=lines.length*4+5;
+  });
+
+  // Acceptance line
+  if(y>272){doc.addPage();y=20;}
+  y+=2;
+  doc.setDrawColor(201,169,110);doc.setLineWidth(0.3);doc.rect(M,y,CW,8);
+  fillR(M,y,CW,8,[245,240,228]);
+  setFont('bold',8,[60,55,45]);
+  doc.text('LA FIRMA DEL PRESENTE CONTRATO IMPLICA LA ACEPTACIÓN DE TODAS LAS CONDICIONES ANTERIORES.',M+3,y+5.5,{maxWidth:CW-6});
+  y+=14;
+
+  // ── SIGNATURES ──
+  if(y>235){doc.addPage();y=20;}
+  y=sectionTitle('FIRMAS',y);
+
+  const sigW=(CW-8)/2,sigH=36;
+
+  // Arrendatario
+  doc.setDrawColor(200,195,185);doc.setLineWidth(0.25);doc.rect(M,y,sigW,sigH);
+  setFont('bold',7,[130,125,115]);doc.text('ARRENDATARIO',M+3,y+5);
+  if(S.sigC){try{doc.addImage(S.sigC,'PNG',M+2,y+7,sigW-4,sigH-14,undefined,'FAST');}catch(e){}}
+  setFont('normal',7,[80,78,72]);doc.text(c.name,M+3,y+sigH-7);
+  setFont('normal',7,[130,125,115]);doc.text('DNI: '+c.dni,M+3,y+sigH-3);
+
+  // Arrendador
+  const sx2=M+sigW+8;
+  doc.setDrawColor(200,195,185);doc.rect(sx2,y,sigW,sigH);
+  setFont('bold',7,[130,125,115]);doc.text('ARRENDADOR',sx2+3,y+5);
+  if(S.sigI){try{doc.addImage(S.sigI,'PNG',sx2+2,y+7,sigW-4,sigH-14,undefined,'FAST');}catch(e){}}
+  setFont('normal',7,[80,78,72]);doc.text('Iñaki Mendialdua Gametxogoikoetxea',sx2+3,y+sigH-7);
+  setFont('normal',7,[130,125,115]);doc.text('DNI: 79126835G',sx2+3,y+sigH-3);
+
+  y+=sigH+6;
+  setFont('italic',8,[130,125,115]);
+  doc.text('Firmado en Bilbao, a '+fmtDate(new Date().toISOString().split('T')[0]),M,y);
+
+  // ── FOOTER ALL PAGES ──
+  const total=doc.internal.getNumberOfPages();
+  for(let i=1;i<=total;i++){
+    doc.setPage(i);
+    fillR(0,285,PW,12,dark);
+    setFont('normal',7,[100,95,85]);
+    doc.text('mendivan.com · inaki@mendivan.com · Iñaki Mendialdua · DNI 79126835G',PW/2,291,{align:'center'});
+    doc.text(`${i} / ${total}`,PW-M,291,{align:'right'});
+  }
+
+  return doc;
+}
+
+// ══════════════════════════════════════════
+// FINALIZE
+// ══════════════════════════════════════════
+async function finalize(){
+  if(!validate(S.total))return;
+  const loader=document.getElementById('loader');
+  const ltxt=document.getElementById('loadTxt');
+  loader.classList.add('on');
+  const msgs=['Preparando datos...','Comprimiendo fotos...','Añadiendo firmas...','Generando PDF...'];
+  let mi=0;
+  const iv=setInterval(()=>{ltxt.textContent=msgs[mi++%msgs.length];},700);
+  try{
+    // Compress photos before PDF generation to avoid memory issues on iOS
+    await compressPhotos();
+    await new Promise(r=>setTimeout(r,200));
+    const doc=await buildPDF();
+    clearInterval(iv);
+    S.pdfDataUri=doc.output('datauristring');
+    S.pdfDoc=doc;
+    loader.classList.remove('on');
+    goTo(7);
+    buildSummary();
+    // Small delay then auto-open
+    setTimeout(()=>openPDF(), 400);
+  }catch(err){
+    clearInterval(iv);
+    loader.classList.remove('on');
+    toast('Error: '+err.message);
+    console.error(err);
+  }
+}
+
+// Compress all photos to max 800px wide JPEG at 0.7 quality — prevents iOS memory crash
+async function compressPhotos(){
+  const keys=Object.keys(S.photos);
+  for(const k of keys){
+    S.photos[k]=await resizeImage(S.photos[k],800,0.72);
+  }
+}
+
+function resizeImage(dataUri,maxW,quality){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>{
+      const scale=Math.min(1,maxW/img.width);
+      const w=Math.round(img.width*scale);
+      const h=Math.round(img.height*scale);
+      const c=document.createElement('canvas');
+      c.width=w;c.height=h;
+      const ctx=c.getContext('2d');
+      ctx.drawImage(img,0,0,w,h);
+      resolve(c.toDataURL('image/jpeg',quality));
+    };
+    img.onerror=()=>resolve(dataUri); // keep original on error
+    img.src=dataUri;
+  });
+}
+
+function openPDF(){
+  if(!S.pdfDataUri)return;
+  const fn=`MendiVan_${VEHICLES[S.vehicle].name}_${S.client.name.replace(/ /g,'_')}_${S.dates.start}.pdf`;
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
+
+  if(isIOS){
+    // iOS: open PDF in new tab — user taps share icon → Save to Files / WhatsApp etc
+    const newTab=window.open('','_blank');
+    if(newTab){
+      newTab.document.write(
+        '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width">'+
+        '<title>'+fn+'</title><style>body,html{margin:0;padding:0;background:#1a1a1a}'+
+        '.top{background:#1a1a1a;color:#c9a96e;font-family:sans-serif;font-size:13px;'+
+        'padding:12px 16px;display:flex;align-items:center;gap:8px}'+
+        'embed{width:100%;height:calc(100vh - 44px);display:block}</style></head>'+
+        '<body><div class="top">📄 '+fn+' — Usa el botón compartir ↑ para guardar</div>'+
+        '<embed src="'+S.pdfDataUri+'" type="application/pdf">'+
+        '</body></html>'
+      );
+      newTab.document.close();
+    } else {
+      // Popup bloqueado — fallback directo
+      window.location.href=S.pdfDataUri;
+    }
+  } else {
+    // Desktop / Android: descarga directa
+    const a=document.createElement('a');
+    a.href=S.pdfDataUri;
+    a.download=fn;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+}
+
+function dlPDF(){openPDF();}
+
+function buildSummary(){
+  const veh=VEHICLES[S.vehicle];
+  document.getElementById('succSub').textContent=`Envíaselo a ${S.client.name} por WhatsApp o email.`;
+  document.getElementById('summCard').innerHTML=`
+    <div class="s-row"><span class="s-key">Vehículo</span><span class="s-val">${veh.name} · ${veh.plate}</span></div>
+    <div class="s-row"><span class="s-key">Cliente</span><span class="s-val">${S.client.name}</span></div>
+    <div class="s-row"><span class="s-key">Período</span><span class="s-val">${fmtDate(S.dates.start)} → ${fmtDate(S.dates.end)}</span></div>
+    <div class="s-row"><span class="s-key">Noches</span><span class="s-val">${S.dates.nights}</span></div>
+    <div class="s-row"><span class="s-key">Total</span><span class="s-val">${S.dates.total} €</span></div>
+    <div class="s-row"><span class="s-key">Fotos incluidas</span><span class="s-val">${Object.keys(S.photos).length} / 9</span></div>
+    <div class="s-row"><span class="s-key">Firmas</span><span class="s-val">Cliente ✓  ·  Iñaki ✓</span></div>`;
+}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'),2800);
+}
+</script>
+</body>
+</html>
